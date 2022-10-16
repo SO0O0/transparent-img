@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     python3-setuptools \
     python3-wheel \
     python3-cffi \
+    python-opencv \
     git \
     && rm -rf /var/lib/apt/lists/* \
     && pip3 install --upgrade pip
