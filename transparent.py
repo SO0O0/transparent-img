@@ -1,26 +1,22 @@
+import glob
+import re
+
 import cv2
-import os
+import numpy as np
 
-def transparent(img):
-    # 画像の読み込み
-    img = cv2.imread(img)
-    # 画像のサイズ
-    height, width = img.shape[:2]
-    # 画像の白い部分を透過する
-    for i in range(height):
-        for j in range(width):
-            if img[i, j][0] == 255 and img[i, j][1] == 255 and img[i, j][2] == 255:
-                img[i, j][3] = 0
-    return img
+# Get paths to all images in the folder
+img_path = glob.glob('img/*.jpg') + glob.glob('img/*.png')
 
-if __name__ == '__main__':
-    # 画像のフォルダ
-    folder = 'img'
-    # 画像のファイル名(.DS_Storeを除く)
-    img_name = [f for f in os.listdir(folder) if os.path.isfile(os.path.join(folder, f)) and f != '.DS_Store']
-    for i in img_name:
-        print(folder + '/' + i)
-        img = transparent(folder + '/' + i)
-        # 画像の保存
-        cv2.imwrite(folder + '/' + i, img)
+for img in img_path:
+    # get file name
+    fn = re.findall(r"/(.+)\.", img)[0]
 
+    # load the image
+    img = cv2.imread(img, -1)
+
+    # create a mask
+    img[:, :, 3] = np.where(np.all(img == 255, axis=-1), 0, 255)
+
+    # save the image
+    print(f"save {fn}.png")
+    cv2.imwrite(f"{fn}.png", img)
